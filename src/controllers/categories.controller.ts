@@ -61,7 +61,10 @@ export const getCategory = async (
       return next(new ApiError("Category does not exist", 404));
     }
 
-    res.status(200).json({ success: true, data: category });
+    res.status(200).json({
+      success: true,
+      data: category,
+    });
   } catch (error) {
     console.error(error);
     next(error);
@@ -83,7 +86,10 @@ export const getCategories = async (
         name: "asc",
       },
     });
-    res.status(200).json({ success: true, data: categories });
+    res.status(200).json({
+      success: true,
+      data: categories,
+    });
   } catch (error) {
     console.error(error);
     next(error);
@@ -103,9 +109,10 @@ export const deleteCategory = async (
       },
     });
 
-    res
-      .status(200)
-      .json({ success: true, message: "category has been deleted" });
+    res.status(200).json({
+      success: true,
+      message: "category has been deleted",
+    });
   } catch (error) {
     console.error(error);
     next(error);
