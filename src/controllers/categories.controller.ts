@@ -111,3 +111,43 @@ export const deleteCategory = async (
     next(error);
   }
 };
+
+export const updateCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { categoryId } = req.params;
+  const { name }: CategoryBody = req.body;
+  if (!name) {
+    return next(new ApiError("Valid name required", 400));
+  }
+  try {
+    const categoryExists = await db.category.findFirst({
+      where: {
+        name: name.trim().toLowerCase(),
+      },
+    });
+
+    if (categoryExists) {
+      return next(new ApiError("Category with the same name exists", 409));
+    }
+
+    const category = await db.category.update({
+      where: {
+        id: categoryId,
+      },
+      data: {
+        name: name.trim().toLowerCase(),
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "category has been updated",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
