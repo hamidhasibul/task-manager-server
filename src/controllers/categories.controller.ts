@@ -89,3 +89,25 @@ export const getCategories = async (
     next(error);
   }
 };
+
+export const deleteCategory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { categoryId } = req.params;
+  try {
+    await db.category.delete({
+      where: {
+        id: categoryId,
+      },
+    });
+
+    res
+      .status(200)
+      .json({ success: true, message: "category has been deleted" });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
