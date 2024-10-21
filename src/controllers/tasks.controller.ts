@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { type Priority, type TaskBody } from "types/tasks.types";
+import {
+  type TaskFilters,
+  type Priority,
+  type TaskBody,
+} from "types/tasks.types";
 import ApiError from "../utils/api-error";
 import { db } from "../db";
 
@@ -73,6 +77,61 @@ export const getTask = async (
     res.status(200).json({
       success: true,
       data: task,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const getTasks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { status, priority, category }: TaskFilters = req.query;
+
+  try {
+    const filter: Record<string, any> = {};
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (priority) {
+      filter.priority = priority;
+    }
+
+    if (category) {
+      filter.Category = {
+        name: {
+          contains: category,
+          mode: "insensitive",
+        },
+      };
+    }
+
+    const tasks = await db.task.findMany({
+      where: filter,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        dueDate: true,
+        priority: true,
+        status: true,
+        Category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      data: tasks,
     });
   } catch (error) {
     console.error(error);

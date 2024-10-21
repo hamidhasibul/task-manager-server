@@ -7,3 +7,9 @@ export type TaskBody = {
 };
 
 export type Priority = "HIGH" | "NORMAL" | "LOW";
+
+export type TaskFilters = {
+  status?: "PENDING" | "COMPLETED";
+  priority?: Priority;
+  category?: string;
+};
