@@ -168,3 +168,31 @@ export const changeTaskPriority = async (
     next(error);
   }
 };
+
+export const changeTaskStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { taskId } = req.params;
+  const { status }: { status: "PENDING" | "COMPLETED" } = req.body;
+
+  try {
+    await db.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        status,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Task status changed",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
