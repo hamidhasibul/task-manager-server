@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Priority {
+  HIGH
+  NORMAL
+  LOW
+}
+
+enum Status {
+  PENDING
+  COMPLETED
+}
+
 model Category {
   id    String @id @default(uuid())
   name  String @unique
@@ -21,8 +32,8 @@ model Task {
   title       String
   description String
   dueDate     DateTime
-  priority    String
-  status      String
+  priority    Priority @default(NORMAL)
+  status      Status   @default(PENDING)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
