@@ -79,3 +79,26 @@ export const getTask = async (
     next(error);
   }
 };
+
+export const deleteTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { taskId } = req.params;
+  try {
+    await db.task.delete({
+      where: {
+        id: taskId,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Task has been deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
