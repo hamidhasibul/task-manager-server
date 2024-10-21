@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { TaskBody } from "types/tasks.types";
+import { type Priority, type TaskBody } from "types/tasks.types";
 import ApiError from "../utils/api-error";
 import { db } from "../db";
 
@@ -96,6 +96,72 @@ export const deleteTask = async (
     res.status(200).json({
       success: true,
       message: "Task has been deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const updateTask = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { title, description, dueDate }: TaskBody = req.body;
+  const { taskId } = req.params;
+
+  if (!title || !description || !dueDate) {
+    return next(new ApiError("Bad request", 400));
+  }
+
+  try {
+    await db.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        title: title.trim(),
+        description: description.trim(),
+        dueDate: new Date(dueDate),
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "task has been updated",
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
+export const changeTaskPriority = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { priority }: { priority: Priority } = req.body;
+  const { taskId } = req.params;
+
+  if (!priority) {
+    return next(new ApiError("Bad Request", 400));
+  }
+
+  try {
+    const task = await db.task.update({
+      where: {
+        id: taskId,
+      },
+      data: {
+        priority: priority,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "task priority changed",
     });
   } catch (error) {
     console.error(error);
